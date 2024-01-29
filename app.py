@@ -3,6 +3,7 @@ from dash import State, Input, Output, html, dcc
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
+import plotly.express as px
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
