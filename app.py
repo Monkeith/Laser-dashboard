@@ -10,7 +10,17 @@ sidebar = html.Div([
     dbc.Button(id="open-offcanvas", n_clicks=0),
     dbc.Offcanvas(
         children=[
-            html.H2("Geluiden"),
+            dbc.Label("Voer gewenste frequentie in:"),
+            dbc.Input(
+                id= 'frequency-input',
+                type='number',
+                value=330,
+                min=1,
+                max=20000,
+                step=1,
+                placeholder='Frequentie'
+                ),
+
             dbc.ListGroup([
                 dbc.ListGroupItem("300Hz", id="300Hz", n_clicks=0, action=True),
                 dbc.ListGroupItem("400Hz", id="400Hz", n_clicks=0, action=True),
@@ -21,14 +31,22 @@ sidebar = html.Div([
             ]),
         ],
         id="offcanvas",
-        title="Title",
+        title="Geluiden",
         is_open=False,
     ),
 ])
 
 content = html.Div([
-    dbc.Col(),
-    dbc.Col()
+    dbc.Col(
+        html.Div(), width=6
+    ),
+    dbc.Col(
+        dbc.DropdownMenu([
+            dbc.DropdownMenuItem('FIR'),
+            dbc.DropdownMenuItem('IIR'),
+            dbc.DropdownMenuItem('...'),
+        ])
+    ),
 ])
 app.layout = dbc.Container([
     dbc.Row([
@@ -37,7 +55,8 @@ app.layout = dbc.Container([
 
     html.Hr(),  # Horizontal line
 
-    content,sidebar
+    content,sidebar,
+    dcc.Graph(id='wave-plot')
 ])
 
 @app.callback(
@@ -49,6 +68,7 @@ def toggle_offcanvas(n1, is_open):
     if n1:
         return not is_open
     return is_open
+
 
 if __name__ == "__main__":
     app.run_server(debug=False)
