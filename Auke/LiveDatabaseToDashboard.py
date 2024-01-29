@@ -1,4 +1,5 @@
 import dash
+import secrets
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import psycopg2
@@ -6,22 +7,18 @@ import pandas as pd
 from datetime import timedelta
 
 # Verbindingsgegevens
-dbname = "tsdb"
-user = "tsdbadmin"
-password = "1uG?RrmOV7x.62"
-host = "ox6uce6ozv.nddn3dnk87.tsdb.cloud.timescale.com"
-port = "33993"
+
 
 # Functie om de laatste 100 datapunten uit de database te halen
 def get_last_100_data_points():
     try:
         # Maak verbinding met de database
         conn = psycopg2.connect(
-            dbname=dbname,
-            user=user,
-            password=password,
-            host=host,
-            port=port
+            dbname=secrets.DATABASE_NAME,
+            user=secrets.DATABASE_USER,
+            password=secrets.DATABASE_PASSWORD,
+            host=secrets.DATABASE_HOST,
+            port=secrets.DATABASE_PORT,
         )
 
         # Voer een SQL-query uit om de laatste 100 datapunten op te halen
