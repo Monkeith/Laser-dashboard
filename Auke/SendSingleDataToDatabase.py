@@ -1,11 +1,5 @@
 import psycopg2
-
-# Verbindingsgegevens
-dbname = "tsdb"
-user = "tsdbadmin"
-password = "1uG?RrmOV7x.62"
-host = "ox6uce6ozv.nddn3dnk87.tsdb.cloud.timescale.com"
-port = "33993"
+import secrets
 
 # SQL-opdracht om tabel te maken
 create_table_query = """
@@ -28,11 +22,11 @@ cur = None
 try:
     # Maak verbinding met de database
     conn = psycopg2.connect(
-        dbname=dbname,
-        user=user,
-        password=password,
-        host=host,
-        port=port
+        dbname=secrets.DATABASE_NAME,
+        user=secrets.DATABASE_USER,
+        password=secrets.DATABASE_PASSWORD,
+        host=secrets.DATABASE_HOST,
+        port=secrets.DATABASE_PORT,
     )
 
     # Maak een cursor object

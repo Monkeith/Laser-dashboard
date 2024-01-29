@@ -1,4 +1,5 @@
 import dash
+import secrets
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
@@ -9,11 +10,11 @@ import pandas as pd
 # Connect to the database
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname="tsdb",
-        user="tsdbadmin",
-        password="1uG?RrmOV7x.62",
-        host="ox6uce6ozv.nddn3dnk87.tsdb.cloud.timescale.com",
-        port="33993"
+        dbname=secrets.DATABASE_NAME,
+        user=secrets.DATABASE_USER,
+        password=secrets.DATABASE_PASSWORD,
+        host=secrets.DATABASE_HOST,
+        port=secrets.DATABASE_PORT,
     )
     return conn
 

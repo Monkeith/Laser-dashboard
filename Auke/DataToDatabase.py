@@ -1,4 +1,5 @@
 import dash
+import secrets
 from dash import Input, Output, html
 import dash_bootstrap_components as dbc
 import psycopg2
@@ -19,11 +20,11 @@ def receive_sound_data_from_esp32():
 def save_sound_data_to_database(sound_data):
     try:
         conn = psycopg2.connect(
-            dbname="tsdb",
-            user="tsdbadmin",
-            password="1uG?RrmOV7x.62",
-            host="ox6uce6ozv.nddn3dnk87.tsdb.cloud.timescale.com",
-            port="33993"
+            dbname=secrets.DATABASE_NAME,
+            user=secrets.DATABASE_USER,
+            password=secrets.DATABASE_PASSWORD,
+            host=secrets.DATABASE_HOST,
+            port=secrets.DATABASE_PORT,
         )
         cur = conn.cursor()
 
