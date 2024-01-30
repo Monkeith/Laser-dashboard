@@ -1,5 +1,5 @@
 import psycopg2
-import secrets
+import mysecrets
 """
 Hier kun je de database mee legen zodat je nieuwe data kunt toevoegen
 """
@@ -11,11 +11,11 @@ def truncate_table(table_name):
     try:
         # Maak verbinding met de database
         conn = psycopg2.connect(
-            dbname=secrets.DATABASE_NAME,
-            user=secrets.DATABASE_USER,
-            password=secrets.DATABASE_PASSWORD,
-            host=secrets.DATABASE_HOST,
-            port=secrets.DATABASE_PORT,
+            dbname=mysecrets.DATABASE_NAME,
+            user=mysecrets.DATABASE_USER,
+            password=mysecrets.DATABASE_PASSWORD,
+            host=mysecrets.DATABASE_HOST,
+            port=mysecrets.DATABASE_PORT,
         )
 
         # Maak een cursor object
@@ -38,7 +38,7 @@ def truncate_table(table_name):
         conn.close()
 
 # Geef de naam van de tabel op die je wilt leegmaken
-table_name = "your_table_name"
+table_name = "bytearray_table"
 
 # Leeg de inhoud van de tabel
 truncate_table(table_name)

@@ -1,7 +1,7 @@
 import psycopg2
 import random
 import time
-import secrets
+import mysecrets
 
 # SQL-opdracht om tabel te maken
 create_table_query = """
@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS your_table_name (
 try:
     # Maak verbinding met de database
     conn = psycopg2.connect(
-        dbname=secrets.DATABASE_NAME,
-        user=secrets.DATABASE_USER,
-        password=secrets.DATABASE_PASSWORD,
-        host=secrets.DATABASE_HOST,
-        port=secrets.DATABASE_PORT,
+        dbname=mysecrets.DATABASE_NAME,
+        user=mysecrets.DATABASE_USER,
+        password=mysecrets.DATABASE_PASSWORD,
+        host=mysecrets.DATABASE_HOST,
+        port=mysecrets.DATABASE_PORT,
     )
 
     # Maak een cursor object

@@ -1,8 +1,8 @@
 import dash
-import secrets
+import mysecrets
 from dash.dependencies import Input, Output
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import dash_bootstrap_components as dbc
 import psycopg2
 import pandas as pd
@@ -10,11 +10,11 @@ import pandas as pd
 # Connect to the database
 def connect_to_db():
     conn = psycopg2.connect(
-        dbname=secrets.DATABASE_NAME,
-        user=secrets.DATABASE_USER,
-        password=secrets.DATABASE_PASSWORD,
-        host=secrets.DATABASE_HOST,
-        port=secrets.DATABASE_PORT,
+        dbname=mysecrets.DATABASE_NAME,
+        user=mysecrets.DATABASE_USER,
+        password=mysecrets.DATABASE_PASSWORD,
+        host=mysecrets.DATABASE_HOST,
+        port=mysecrets.DATABASE_PORT,
     )
     return conn
 

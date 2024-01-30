@@ -3,19 +3,17 @@ import mysecrets
 
 # SQL-opdracht om tabel te maken
 create_table_query = """
-CREATE TABLE IF NOT EXISTS your_table_name (
-    timestamp_column TIMESTAMP,
-    sound_level INTEGER
+CREATE TABLE IF NOT EXISTS bytearray_table (
+    id SERIAL PRIMARY KEY,
+    byte_array BYTEA
 );
 """
-#Table name
 
-your_table_name = Bytearray_table
 # Voorbeeld gegevens om toe te voegen
 data_to_insert = [
-    ("2024-01-01 13:20:00", 100),
+    (b'9'),
 
-    # Voeg meer gegevens toe zoals gewenst
+    # Voeg meer byte-array gegevens toe zoals gewenst
 ]
 
 conn = None
@@ -38,11 +36,11 @@ try:
     cur.execute(create_table_query)
 
     # Voeg de gegevens toe aan de tabel
-    for timestamp, sound_level in data_to_insert:
+    for byte_array in data_to_insert:
         cur.execute("""
-            INSERT INTO your_table_name (timestamp_column, sound_level)
-            VALUES (%s, %s);
-        """, (timestamp, sound_level))
+            INSERT INTO bytearray_table (byte_array)
+            VALUES (%s);
+        """, (byte_array,))
 
     # Commit de transactie
     conn.commit()

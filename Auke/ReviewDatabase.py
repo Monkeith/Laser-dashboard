@@ -1,14 +1,14 @@
 import psycopg2
-import secrets
+import mysecrets
 
 try:
     # Maak verbinding met de database
     conn = psycopg2.connect(
-        dbname=secrets.DATABASE_NAME,
-        user=secrets.DATABASE_USER,
-        password=secrets.DATABASE_PASSWORD,
-        host=secrets.DATABASE_HOST,
-        port=secrets.DATABASE_PORT,
+        dbname=mysecrets.DATABASE_NAME,
+        user=mysecrets.DATABASE_USER,
+        password=mysecrets.DATABASE_PASSWORD,
+        host=mysecrets.DATABASE_HOST,
+        port=mysecrets.DATABASE_PORT,
     )
 
     # Maak een cursor object
