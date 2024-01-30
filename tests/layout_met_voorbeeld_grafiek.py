@@ -83,31 +83,41 @@ app.layout = html.Div([
         dbc.Button(id="open-offcanvas", n_clicks=0),
         dbc.Offcanvas(
             children=[
-                dbc.Label("Voer gewenste frequentie in:"),
-                dbc.Input(
-                    id= 'frequency-input',
-                    type='number',
-                    value=330,
-                    min=1,
-                    max=20000,
-                    step=1,
-                    placeholder='Frequentie'
+                dbc.Label("Kies gewenste frequentie"),
+               html.Div([
+                    dcc.RadioItems(
+                        id='radios',
+                        className='btn-group',
+                        #vertical=True,
+                        options=[
+                            {'label': '220 Hz', 'value': 200},
+                            {'label': '330 Hz', 'value': 330},
+                            {'label': '460 Hz', 'value': 460},
+                            {'label': '590 Hz', 'value': 590},
+                            {'label': '720 Hz', 'value': 720},
+                            {'label': '850 Hz', 'value': 850},
+                            {'label': '980 Hz', 'value': 980},
+                            {'label': '1110 Hz', 'value': 1110},
+                            {'label': '1240 Hz', 'value': 1240},
+                            {'label': '1370 Hz', 'value': 1370},
+                            {'label': '1500 Hz', 'value': 1500},
+                            {'label': '1630 Hz', 'value': 1630},
+                            {'label': '1760 Hz', 'value': 1760},
+                            {'label': '1890 Hz', 'value': 1890},
+                            {'label': '2020 Hz', 'value': 2020},
+                        ],
+                        value=1,
                     ),
-
-                dbc.ListGroup([
-                    dbc.ListGroupItem("300Hz", id="300Hz", n_clicks=0, action=True),
-                    dbc.ListGroupItem("400Hz", id="400Hz", n_clicks=0, action=True),
-                    dbc.ListGroupItem("500Hz", id="500Hz", n_clicks=0, action=True),
-                    dbc.ListGroupItem("600Hz", id="600Hz", n_clicks=0, action=True),
-                    dbc.ListGroupItem("700Hz", id="700Hz", n_clicks=0, action=True),
-                    dbc.ListGroupItem("800Hz", id="800Hz", n_clicks=0, action=True),
-                ]),
+                    html.Div(id='Output'),
+                ],
+                    className='radio-group',
+                ),
             ],
             id="offcanvas",
             title="Geluiden",
             is_open=False,
         ),  
-    ])
+    ]),
 ])
 
 @app.callback(
