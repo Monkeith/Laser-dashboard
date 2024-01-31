@@ -1,16 +1,74 @@
 import dash
 from dash import State, Input, Output, html, dcc
+import base64
+import wave
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import time
 import dash_daq as daq
+import plotly.graph_objects as go
 
 SAMPLE_RATE = 44100
 SAMPLE_TIME = 1 / SAMPLE_RATE
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+
+# Audio-bestand
+audio_file = "C:/Users/Auke de Haan/Desktop/sample-6s.wav"
+
+# Inhoud van het audiobestand omzetten naar base64
+encoded_audio = base64.b64encode(open(audio_file, "rb").read()).decode()
+
+# Functie om audio te lezen en golfvormgegevens te verkrijgen
+def read_audio_waveform(file_path):
+    with wave.open(file_path, 'rb') as wf:
+        # Aantal frames in het audiobestand
+        num_frames = wf.getnframes()
+
+        # Lees de audiogegevens als een reeks frames
+        audio_data = wf.readframes(num_frames)
+
+        # Converteer de ruwe binair gecodeerde audio naar een numpy-array van integers
+        audio_array = np.frombuffer(audio_data, dtype=np.int16)
+
+        # Bepaal de tijd-as (in seconden) voor de golfvormgegevens
+        sample_rate = wf.getframerate()
+        duration = num_frames / sample_rate
+        time_axis = np.linspace(0, duration, num=len(audio_array))
+
+        return time_axis, audio_array, sample_rate
+
+
+# Golfvormgegevens van het audiobestand verkrijgen
+time_values, audio_values, sample_rate = read_audio_waveform(audio_file)
+
+# Golfvormgrafiek maken
+waveform_figure = go.Figure()
+waveform_figure.add_trace(go.Scatter(x=time_values, y=audio_values, mode='lines'))
+waveform_figure.update_layout(title="Waveform van het audiobestand",
+                              xaxis_title="Tijd (s)",
+                              yaxis_title="Amplitude")
+
+# Functie om het frequentiespectrum te berekenen met behulp van de FFT
+def calculate_frequency_spectrum(audio_data, sample_rate):
+    n = len(audio_data)
+    fft_result = np.fft.fft(audio_data)
+    magnitude = np.abs(fft_result)
+    frequencies = np.fft.fftfreq(n, d=1/sample_rate)
+    return frequencies[:n//2], magnitude[:n//2]
+
+# Bereken het frequentiespectrum van de audiogegevens
+frequencies, magnitude = calculate_frequency_spectrum(audio_values, sample_rate)
+
+# Grafiek voor het frequentiespectrum maken
+spectrum_figure = go.Figure()
+spectrum_figure.add_trace(go.Scatter(x=frequencies, y=magnitude, mode='lines'))
+spectrum_figure.update_layout(title="Frequentiespectrum van het audiobestand",
+                              xaxis_title="Frequentie (Hz)",
+                              yaxis_title="Magnitude")
+
 
 def drawFigure():
     return html.Div([
@@ -74,7 +132,7 @@ app.layout = html.Div([
                 dbc.Col([
                     html.Div([
                         dcc.Dropdown(
-                            id='Filter',
+                            id='Filter1',
                             options=[
                                 {'label': 'Bandpass', 'value': 'Bandpass'},
                                 {'label': 'Bandstop', 'value': 'Bandstop'},
@@ -84,42 +142,54 @@ app.layout = html.Div([
                             placeholder="Selecteer de filter",
                             style=dict(width='60%', display='inline-block', verticalAlign="middle")
                         ),
-                        html.Div(id='cutoff-input')
+                        html.Div(id='cutoff-input1')
                     ]),
                     html.Div([
                         daq.ToggleSwitch(
-                            id='my-toggle-switch',
+                            id='my-toggle-switch1',
                             value=False
                         ),
-                        html.Div(id='my-toggle-switch-output')
+                        html.Div(id='my-toggle-switch-output1')
                     ]),
                 ]),
             ]),
-            html.Hr(),
-            dbc.Row([
-                dbc.Col([
-                    drawFigure()
-                ], width=6),
-                dbc.Col([
-                    drawFigure()
-                ], width=6),
-            ]),
 
             html.Div([
-                dbc.Row([
-                    dbc.Col([
-                        html.H1("Audiovisualisatie", style={'font-size': '24px'}),
-                        html.Audio(src='../.venv/audio_from_db.wav', controls=True),
-                    ], width=6),  # Eerste kolom neemt de helft van de breedte in
-                    dbc.Col([
-                        html.H2("Audiovisualisatie", style={'font-size': '24px'}),
-                        html.Audio(src='../.venv/audio_from_db.wav', controls=True),
-                    ], width=6),  # Tweede kolom neemt de andere helft van de breedte in
+                    html.H1("Audio Visualisatie"),
+                    html.Div([
+                dcc.Graph(figure=waveform_figure)
+                    ]),
+                    html.Div([
+            dcc.Graph(figure=spectrum_figure)
+                    ]),
+                html.H1("Audio afspelen"),
+            html.Audio(src=f"data:audio/wav;base64,{encoded_audio}", controls=True)
                 ]),
-            ])
-
-        ]),
-    ),
+                dbc.Col([
+                    html.Div([
+                        dcc.Dropdown(
+                            id='Filter2',
+                            options=[
+                                {'label': 'Bandpass', 'value': 'Bandpass'},
+                                {'label': 'Bandstop', 'value': 'Bandstop'},
+                                {'label': 'Highpass', 'value': 'Highpass'},
+                                {'label': 'Lowpass', 'value': 'Lowpass'}
+                            ],
+                            placeholder="Selecteer de filter",
+                            style=dict(width='60%', display='inline-block', verticalAlign="middle")
+                        ),
+                        html.Div(id='cutoff-input2')
+                    ]),
+                    html.Div([
+                        daq.ToggleSwitch(
+                            id='my-toggle-switch2',
+                            value=False
+                        ),
+                        html.Div(id='my-toggle-switch-output2')
+                    ]),
+                ]),
+            ]),
+        ),
     html.Div([
         dbc.Button(id="open-offcanvas", n_clicks=0),
         dbc.Offcanvas(
@@ -199,14 +269,14 @@ def update_sine_wave(n, frequency):
     return figure
 
 @app.callback(
-    Output('cutoff-input', 'children'),
-    Input('Filter', 'value')
+    Output('cutoff-input1', 'children'),
+    Input('Filter1', 'value')
 )
-def update_cutoff_input(filter_value):
+def update_cutoff_input1(filter_value):
     if filter_value in ['Highpass', 'Lowpass']:
         return html.Div([
             dcc.Input(
-                id='Cutoff',
+                id='Cutoff1',
                 type='number',
                 placeholder="Voer de cut-off frequentie in",
                 style=dict(width='60%', display='inline-block', verticalAlign="middle")
@@ -229,12 +299,51 @@ def update_cutoff_input(filter_value):
         ])
 
 @app.callback(
-    Output('my-toggle-switch-output', 'children'),
-    Input('my-toggle-switch', 'value')
+    Output('my-toggle-switch-output1', 'children'),
+    Input('my-toggle-switch1', 'value')
 )
-def update_output(value):
+def update_output1(value):
     status = "aan" if value else "uit"
     return f'Filter is: {status}'
+
+@app.callback(
+    Output('cutoff-input2', 'children'),
+    Input('Filter2', 'value')
+)
+def update_cutoff_input2(filter_value):
+    if filter_value in ['Highpass', 'Lowpass']:
+        return html.Div([
+            dcc.Input(
+                id='Cutoff2',
+                type='number',
+                placeholder="Voer de cut-off frequentie in",
+                style=dict(width='60%', display='inline-block', verticalAlign="middle")
+            )
+        ])
+    else:
+        return html.Div([
+            dcc.Input(
+                id='Input3',
+                type='number',
+                placeholder="Voer waarde 1 in",
+                style=dict(width='60%', display='inline-block', verticalAlign="middle")
+            ),
+            dcc.Input(
+                id='Input4',
+                type='number',
+                placeholder="Voer waarde 2 in",
+                style=dict(width='60%', display='inline-block', verticalAlign="middle")
+            )
+        ])
+
+@app.callback(
+    Output('my-toggle-switch-output2', 'children'),
+    Input('my-toggle-switch2', 'value')
+)
+def update_output2(value):
+    status = "aan" if value else "uit"
+    return f'Filter is: {status}'
+
 
 
 if __name__ == "__main__":
