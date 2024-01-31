@@ -7,6 +7,8 @@ import plotly.express as px
 import time
 import dash_daq as daq
 
+
+
 SAMPLE_RATE = 44100
 SAMPLE_TIME = 1 / SAMPLE_RATE
 
@@ -107,13 +109,17 @@ app.layout = html.Div([
 
             html.Div([
                 dbc.Row([
+                    html.Div([
+                        html.H1("Audio afspelen"),
+                        html.Audio(src=r"C:\Users\Auke de Haan\Desktop\sample-6s.wav", controls=True)
+                    ]),
                     dbc.Col([
                         html.H1("Audiovisualisatie", style={'font-size': '24px'}),
-                        html.Audio(src='../.venv/audio_from_db.wav', controls=True),
+                        html.Audio(src=r"C:\Users\Auke de Haan\Desktop\sample-6s.wav", controls=True),
                     ], width=6),  # Eerste kolom neemt de helft van de breedte in
                     dbc.Col([
                         html.H2("Audiovisualisatie", style={'font-size': '24px'}),
-                        html.Audio(src='../.venv/audio_from_db.wav', controls=True),
+                        html.Audio(src=r"C:\Users\Auke de Haan\Desktop\sample-6s.wav", controls=True),
                     ], width=6),  # Tweede kolom neemt de andere helft van de breedte in
                 ]),
             ])
